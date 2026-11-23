@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: local-nextjs-mvp
+expected_outcome: |
+  Routes are discovered from the Next.js source, the crawl uses the SITEMAP_COOKIE env var to reach the
+  dashboard, /dashboard/projects/{id} is one template node with 3 instances, /about and /dashboard/reports
+  are reported as routes in code the crawl never reached, the 404 links to /privacy and /contact-sales are
+  high severity issues, and a zip bundle is produced.
+context:
+  scaffold_script: place-files.sh

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Site map</title>
+<style>
+:root{
+  --bg:#f7f6f3;--surface:#ffffff;--surface2:#f0eee9;--text:#1d1c1a;--muted:#6b6862;--line:#dcd8d0;--accent:#2f5bd3;
+  --high:#c4372b;--medium:#b7791f;--low:#5f6f86;
+  --link-out:#2f5bd3;--link-in:#1f8a5b;--link-both:#9a4fc9;--t-entry:#2f5bd3;--t-hub:#7a4cc2;--t-list:#7a4cc2;--t-detail:#2b8a6e;--t-content:#4a7a9c;--t-funnel:#c2622d;--t-utility:#6b6862;--t-legal:#8a8577;--t-error:#c4372b;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#141413;--surface:#1e1d1b;--surface2:#272623;--text:#ecebe7;--muted:#a19d95;--line:#3a3834;--accent:#7d9cf0;
+  --high:#ef6a5e;--medium:#e0a64a;--low:#9aa8bd;
+  --link-out:#7d9cf0;--link-in:#5cc39a;--link-both:#c08cf0;--t-entry:#7d9cf0;--t-hub:#b08ae6;--t-list:#b08ae6;--t-detail:#5cc3a1;--t-content:#7fb0d1;--t-funnel:#ec9461;--t-utility:#a19d95;--t-legal:#b3ad9f;--t-error:#ef6a5e;
+  color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+header{padding:18px 24px 0;border-bottom:1px solid var(--line);background:var(--surface)}
+h1{font-size:20px;margin:0 0 2px}
+.sub{color:var(--muted);font-size:13px}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.stat{background:var(--surface2);border-radius:8px;padding:6px 10px;font-size:13px}
+.stat b{font-size:15px;margin-right:4px}
+.tabs{display:flex;gap:4px}
+.tab{border:0;background:none;color:var(--muted);padding:10px 14px;font:inherit;cursor:pointer;border-bottom:2px solid transparent}
+.tab[aria-selected=true]{color:var(--text);border-bottom-color:var(--accent);font-weight:600}
+main{height:calc(100% - 150px);min-height:400px}
+.view{display:none;height:100%}
+.view.on{display:flex}
+#map-wrap{flex:1;overflow:auto;position:relative}
+#map-tools{position:sticky;top:0;left:0;z-index:2;display:flex;gap:12px;align-items:center;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--line);flex-wrap:wrap;font-size:13px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;background:var(--c);vertical-align:-1px}
+svg text{font-family:inherit}
+.node rect{fill:var(--surface);stroke:var(--line);stroke-width:1}
+.node .bar{stroke:none}
+.node{cursor:pointer}
+.node:hover rect.box{stroke:var(--accent)}
+.node.sel rect.box{stroke:var(--accent);stroke-width:2}
+.node.dim{opacity:.28}
+.node .name{fill:var(--text);font-size:13px;font-weight:600}
+.node .meta{fill:var(--muted);font-size:11px}
+.node .badge{fill:var(--high)}
+.tree-edge{fill:none;stroke:var(--line);stroke-width:1.4}
+.x-edge{fill:none;stroke:var(--accent);stroke-width:1.2;stroke-dasharray:4 3;opacity:.55}
+.x-edge.in{stroke:var(--t-detail)}
+.x-edge.hide{display:none}
+aside#panel{width:380px;max-width:45vw;border-left:1px solid var(--line);background:var(--surface);overflow:auto;padding:18px}
+aside h2{font-size:17px;margin:4px 0 6px}
+.chip{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;color:#fff;background:var(--c,var(--muted));margin-right:4px;text-transform:uppercase;letter-spacing:.03em}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:4px 10px;font-size:13px;margin:12px 0}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;word-break:break-word}
+.desc{font-size:14px;margin:10px 0}
+.desc.missing{color:var(--muted);font-style:italic}
+.plist{list-style:none;padding:0;margin:4px 0 14px}
+.plist li{padding:3px 0}
+.plink{color:var(--accent);cursor:pointer;background:none;border:0;padding:0;font:inherit;text-align:left}
+.plink:hover{text-decoration:underline}
+h3{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:16px 0 4px}
+.issue{border-left:3px solid var(--sev);padding:6px 10px;margin:6px 0;background:var(--surface2);border-radius:0 6px 6px 0;font-size:13px}
+.issue .rec{color:var(--muted);margin-top:3px}
+.scroll{flex:1;overflow:auto;padding:16px 24px}
+input[type=search]{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);width:260px}
+table{border-collapse:collapse;width:100%;font-size:13px;background:var(--surface)}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{position:sticky;top:0;background:var(--surface2);cursor:pointer;white-space:nowrap}
+td.url{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;word-break:break-all}
+.sevhead{margin:18px 0 6px;font-size:15px}
+.empty{color:var(--muted);padding:40px;text-align:center}
+@media (max-width:760px){aside#panel{position:fixed;inset:auto 0 0 0;width:auto;max-width:none;height:55%;border-left:0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">Site map</h1>
+  <div class="sub" id="subtitle"></div>
+  <div class="stats" id="stats"></div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-v="map">Map</button>
+    <button class="tab" role="tab" aria-selected="false" data-v="pages">Pages</button>
+    <button class="tab" role="tab" aria-selected="false" data-v="issues">Issues</button>
+  </nav>
+</header>
+<main>
+  <section class="view on" id="v-map">
+    <div id="map-wrap">
+      <div id="map-tools">
+        <label><input type="checkbox" id="xlinks"> Show all cross-links</label>
+        <span class="legend" id="legend"></span>
+      </div>
+      <svg id="svg"></svg>
+    </div>
+    <aside id="panel"><div class="empty">Select a page to see its description and connections.</div></aside>
+  </section>
+  <section class="view" id="v-pages"><div class="scroll">
+    <p><input type="search" id="q" placeholder="Filter pages"></p>
+    <table id="tbl"><thead><tr>
+      <th data-k="id">ID</th><th data-k="name">Name</th><th data-k="type">Type</th><th data-k="key">URL</th>
+      <th data-k="description">Description</th><th data-k="click_depth">Depth</th><th data-k="in">Links in</th><th data-k="out">Links out</th>
+    </tr></thead><tbody></tbody></table>
+  </div></section>
+  <section class="view" id="v-issues"><div class="scroll" id="issues"></div></section>
+</main>
+<script>
+const DATA = /*__SITEMAP_DATA__*/null;
+const $ = s => document.querySelector(s);
+const el = (t, a = {}, kids = []) => { const n = document.createElement(t); for (const k in a) { if (k === "text") n.textContent = a[k]; else n.setAttribute(k, a[k]); } kids.forEach(c => n.append(c)); return n; };
+const SVGNS = "http://www.w3.org/2000/svg";
+const sv = (t, a = {}) => { const n = document.createElementNS(SVGNS, t); for (const k in a) n.setAttribute(k, a[k]); return n; };
+const byId = Object.fromEntries(DATA.pages.map(p => [p.id, p]));
+const typeColor = t => `var(--t-${t})`;
+const sevColor = s => `var(--${s})`;
+const TYPES = [...new Set(DATA.pages.map(p => p.type))];
+
+// header
+$("#title").textContent = "Site map: " + DATA.project.name;
+document.title = "Site map: " + DATA.project.name;
+$("#subtitle").textContent = `${DATA.project.source_url}  ·  crawled ${DATA.project.crawled_at.slice(0, 10)}` + (DATA.project.prepared_by ? `  ·  prepared by ${DATA.project.prepared_by}` : "");
+const S = DATA.summary;
+[["pages", S.pages], ["connections", DATA.edges.length], ["max click depth", S.max_click_depth],
+ ["high issues", S.issues_by_severity.high], ["medium", S.issues_by_severity.medium], ["low", S.issues_by_severity.low]]
+  .forEach(([l, v]) => $("#stats").append(el("span", { class: "stat" }, [el("b", { text: v }), document.createTextNode(l)])));
+TYPES.forEach(t => { const s = el("span", { text: t }); s.style.setProperty("--c", typeColor(t)); $("#legend").append(s); });
+
+// tabs
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => show(b.dataset.v));
+function show(v) {
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.v === v));
+  document.querySelectorAll(".view").forEach(s => s.classList.toggle("on", s.id === "v-" + v));
+  if (location.hash.slice(1) !== v) history.replaceState(null, "", "#" + v);
+}
+
+// ---------- map (left-to-right tree) ----------
+const W = 210, H = 46, XG = 270, YG = 60, PAD = 24;
+const pos = {};
+let leaf = 0;
+const root = DATA.pages.find(p => !p.parent_id) || DATA.pages[0];
+const placed = new Set();
+function layout(p, depth) {
+  placed.add(p.id);
+  const kids = p.children_ids.map(id => byId[id]).filter(k => k && !placed.has(k.id));
+  let y;
+  if (!kids.length) { y = leaf++ * YG; }
+  else { const ys = kids.map(k => layout(k, depth + 1)); y = (ys[0] + ys[ys.length - 1]) / 2; }
+  pos[p.id] = { x: depth * XG, y };
+  return y;
+}
+layout(root, 0);
+DATA.pages.filter(p => !placed.has(p.id)).forEach(p => layout(p, 1));
+const maxX = Math.max(...Object.values(pos).map(p => p.x)) + W + PAD * 2;
+const maxY = Math.max(...Object.values(pos).map(p => p.y)) + H + PAD * 2;
+const svg = $("#svg");
+svg.setAttribute("width", maxX); svg.setAttribute("height", maxY);
+svg.setAttribute("viewBox", `${-PAD} ${-PAD} ${maxX} ${maxY}`);
+const gEdges = sv("g"), gX = sv("g"), gNodes = sv("g");
+svg.append(gEdges, gX, gNodes);
+DATA.pages.forEach(p => {
+  if (!p.parent_id || !pos[p.parent_id]) return;
+  const a = pos[p.parent_id], b = pos[p.id], mx = a.x + W + (XG - W) / 2;
+  gEdges.append(sv("path", { class: "tree-edge", d: `M${a.x + W},${a.y + H / 2} H${mx} V${b.y + H / 2} H${b.x}` }));
+});
+const xEdges = DATA.edges.filter(e => !e.tree && !e.global);
+const edgeKeys = new Set(xEdges.map(e => e.from + ">" + e.to));
+const defs = sv("defs");
+[["out", "var(--accent)"], ["in", "var(--t-detail)"]].forEach(([k, c]) => {
+  const m = sv("marker", { id: "xa-" + k, viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: "auto" });
+  const pth = sv("path", { d: "M0,1 L9,5 L0,9 z" }); pth.style.fill = c; m.append(pth); defs.append(m);
+});
+svg.prepend(defs);
+// Curves leave and enter cards from the side that faces the other card, with horizontal tangents,
+// so they meet the card edge square-on instead of slicing in at a steep angle.
+function curve(e) {
+  const A = pos[e.from], B = pos[e.to];
+  const off = edgeKeys.has(e.to + ">" + e.from) ? (e.from < e.to ? -5 : 5) : 0;   // two-way links: two parallel curves
+  const y1 = A.y + H / 2 + off, y2 = B.y + H / 2 + off;
+  if (A.x === B.x) {                       // same column: bow out to the right
+    const x = A.x + W, b = Math.min(52, 22 + Math.abs(y2 - y1) * 0.12);
+    return `M${x},${y1} C${x + b},${y1} ${x + b},${y2} ${x},${y2}`;
+  }
+  const fwd = B.x > A.x;
+  const x1 = fwd ? A.x + W : A.x, x2 = fwd ? B.x : B.x + W;
+  const c = Math.max(40, Math.abs(x2 - x1) * 0.5) * (fwd ? 1 : -1);
+  return `M${x1},${y1} C${x1 + c},${y1} ${x2 - c},${y2} ${x2},${y2}`;
+}
+const xEls = xEdges.map(e => {
+  const path = sv("path", { class: "x-edge hide", d: curve(e), "data-from": e.from, "data-to": e.to, "marker-end": "url(#xa-out)" });
+  const t = sv("title"); t.textContent = `${byId[e.from].name} → ${byId[e.to].name}` + (e.labels.length ? ` ("${e.labels[0]}")` : "");
+  path.append(t); gX.append(path); return path;
+});
+const nodeEls = {};
+DATA.pages.forEach(p => {
+  const { x, y } = pos[p.id];
+  const g = sv("g", { class: "node", transform: `translate(${x},${y})`, tabindex: 0, role: "button", "aria-label": p.name });
+  const box = sv("rect", { class: "box", width: W, height: H, rx: 8 });
+  const bar = sv("rect", { class: "bar", width: 5, height: H, rx: 2 }); bar.style.fill = typeColor(p.type);
+  const name = sv("text", { class: "name", x: 14, y: 19 }); name.textContent = trunc(p.name, 26);
+  const meta = sv("text", { class: "meta", x: 14, y: 35 }); meta.textContent = `${p.id} · ${p.type}${p.template ? " ×" + p.instance_count : ""} · ${trunc(p.key, 18)}`;
+  g.append(box, bar, name, meta);
+  if (p.issue_ids && p.issue_ids.length) {
+    const c = sv("circle", { class: "badge", cx: W - 10, cy: 10, r: 5 });
+    const t = sv("title"); t.textContent = p.issue_ids.length + " issue(s)"; c.append(t); g.append(c);
+  }
+  g.onclick = () => select(p.id);
+  g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(p.id); } };
+  gNodes.append(g); nodeEls[p.id] = g;
+});
+function trunc(s, n) { s = s || ""; return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+$("#xlinks").onchange = () => refreshEdges(current);
+let current = null;
+function refreshEdges(id) {
+  const all = $("#xlinks").checked;
+  xEls.forEach(p => {
+    const f = p.dataset.from, t = p.dataset.to;
+    const rel = id && (f === id || t === id);
+    const inbound = !!id && t === id;
+    p.classList.toggle("hide", !(all || rel));
+    p.classList.toggle("in", inbound);
+    p.setAttribute("marker-end", inbound ? "url(#xa-in)" : "url(#xa-out)");
+  });
+}
+function select(id) {
+  current = id;
+  const p = byId[id];
+  const related = new Set([id, ...p.inbound_ids, ...p.outbound_ids, p.parent_id, ...p.children_ids]);
+  Object.entries(nodeEls).forEach(([k, g]) => { g.classList.toggle("sel", k === id); g.classList.toggle("dim", !related.has(k)); });
+  refreshEdges(id);
+  renderPanel(p);
+  show("map");
+  const { x, y } = pos[id], wrap = $("#map-wrap");
+  wrap.scrollTo({ left: Math.max(0, x - wrap.clientWidth / 3), top: Math.max(0, y - wrap.clientHeight / 2), behavior: "smooth" });
+}
+function plinks(ids) {
+  const ul = el("ul", { class: "plist" });
+  if (!ids.length) ul.append(el("li", { text: "None", style: "color:var(--muted)" }));
+  ids.forEach(i => { const b = el("button", { class: "plink", text: `${byId[i].name} (${i})` }); b.onclick = () => select(i); ul.append(el("li", {}, [b])); });
+  return ul;
+}
+function renderPanel(p) {
+  const P = $("#panel"); P.innerHTML = "";
+  const chip = el("span", { class: "chip", text: p.type }); chip.style.setProperty("--c", typeColor(p.type));
+  P.append(chip, el("span", { class: "sub", text: p.id }), el("h2", { text: p.name }));
+  P.append(el("p", { class: "desc" + (p.description ? "" : " missing"), text: p.description || "No description yet." }));
+  const dl = el("dl", { class: "kv" });
+  const add = (k, v) => { if (v === undefined || v === null || v === "") return; dl.append(el("dt", { text: k }), el("dd", {}, [typeof v === "string" ? document.createTextNode(v) : v])); };
+  add("URL", p.url ? el("a", { href: p.url, target: "_blank", rel: "noopener", text: p.key }) : p.key);
+  if (p.template) add("Template", `${p.instance_count} page(s), e.g. ${p.instance_examples.join(", ")}`);
+  add("Navigation", p.nav_placement.join(", "));
+  add("Click depth", p.click_depth === null ? "not reachable" : String(p.click_depth));
+  add("Access", p.access);
+  add("Found via", p.source.join(", "));
+  if (p.source_file) add("Source file", p.source_file);
+  if (p.title) add("Page title", p.title);
+  if (p.forms) add("Forms", String(p.forms));
+  if (p.notes) add("Notes", p.notes);
+  P.append(dl);
+  if (p.parent_id) { P.append(el("h3", { text: "Parent" }), plinks([p.parent_id])); }
+  if (p.children_ids.length) { P.append(el("h3", { text: "Children" }), plinks(p.children_ids)); }
+  P.append(el("h3", { text: "Linked from" }), plinks(p.inbound_ids));
+  P.append(el("h3", { text: "Links to (in page content)" }), plinks(p.content_outbound_ids));
+  const glob = p.outbound_ids.filter(i => !p.content_outbound_ids.includes(i));
+  if (glob.length) P.append(el("p", { class: "sub", text: `Plus ${glob.length} global navigation link(s).` }));
+  if (p.file_links.length) { P.append(el("h3", { text: "Files" })); const ul = el("ul", { class: "plist" }); p.file_links.forEach(f => ul.append(el("li", {}, [el("a", { href: f.url, target: "_blank", rel: "noopener", text: f.text || f.url })]))); P.append(ul); }
+  if (p.external_links.length) { P.append(el("h3", { text: `External links (${p.external_links.length})` })); const ul = el("ul", { class: "plist" }); p.external_links.slice(0, 12).forEach(u => ul.append(el("li", { class: "sub", text: u }))); P.append(ul); }
+  const iss = DATA.issues.filter(i => (p.issue_ids || []).includes(i.id));
+  if (iss.length) { P.append(el("h3", { text: "Issues" })); iss.forEach(i => P.append(issueEl(i, false))); }
+}
+function issueEl(i, withPages = true) {
+  const d = el("div", { class: "issue" }); d.style.setProperty("--sev", sevColor(i.severity));
+  d.append(el("div", {}, [el("b", { text: `${i.id} · ${i.category}  ` }), document.createTextNode(i.message)]));
+  d.append(el("div", { class: "rec", text: i.recommendation }));
+  if (withPages && i.pages.length) {
+    const w = el("div", { class: "rec" });
+    i.pages.slice(0, 12).forEach((pid, n) => { const b = el("button", { class: "plink", text: `${byId[pid].name} (${pid})` }); b.onclick = () => select(pid); if (n) w.append(document.createTextNode(", ")); w.append(b); });
+    d.append(w);
+  }
+  return d;
+}
+
+// ---------- pages table ----------
+let sortKey = "id", sortDir = 1;
+function rows() {
+  const q = $("#q").value.toLowerCase();
+  const list = DATA.pages.map(p => ({ ...p, in: p.inbound_ids.length, out: p.content_outbound_ids.length }))
+    .filter(p => !q || [p.id, p.name, p.type, p.key, p.description].join(" ").toLowerCase().includes(q))
+    .sort((a, b) => (a[sortKey] > b[sortKey] ? 1 : a[sortKey] < b[sortKey] ? -1 : 0) * sortDir);
+  const tb = $("#tbl tbody"); tb.innerHTML = "";
+  list.forEach(p => {
+    const name = el("button", { class: "plink", text: p.name }); name.onclick = () => select(p.id);
+    const chip = el("span", { class: "chip", text: p.type }); chip.style.setProperty("--c", typeColor(p.type));
+    tb.append(el("tr", {}, [el("td", { text: p.id }), el("td", {}, [name]), el("td", {}, [chip]), el("td", { class: "url", text: p.key }),
+      el("td", { text: p.description || "" }), el("td", { text: p.click_depth ?? "" }), el("td", { text: p.in }), el("td", { text: p.out })]));
+  });
+}
+$("#q").oninput = rows;
+document.querySelectorAll("#tbl th").forEach(th => th.onclick = () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : 1; sortKey = k; rows(); });
+rows();
+
+// ---------- issues ----------
+const IV = $("#issues");
+if (!DATA.issues.length) IV.append(el("div", { class: "empty", text: "No issues found." }));
+["high", "medium", "low"].forEach(s => {
+  const list = DATA.issues.filter(i => i.severity === s);
+  if (!list.length) return;
+  IV.append(el("h2", { class: "sevhead", text: `${s[0].toUpperCase() + s.slice(1)} (${list.length})` }));
+  list.forEach(i => IV.append(issueEl(i)));
+});
+if (S.crawl_warnings.length) { IV.append(el("h2", { class: "sevhead", text: "Crawl notes" })); S.crawl_warnings.forEach(w => IV.append(el("p", { class: "sub", text: w }))); }
+
+const start = location.hash.slice(1);
+select(root.id);
+if (["pages", "issues"].includes(start)) show(start);
+</script>
+</body>
+</html>

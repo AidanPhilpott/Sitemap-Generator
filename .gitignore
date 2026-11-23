@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.DS_Store
+crawl*.json
+routes.json
+annotations.json
+sitemap*.json
+sitemap-handoff/
+*-sitemap-*.zip

@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: multiplayer-public-site
+expected_outcome: |
+  A zip bundle with sitemap.html, sitemap.json, pages.csv, links.csv, issues.csv, sitemap.mmd and README.md.
+  About 16 pages, each with a written one or two sentence description. Case studies sit under /work,
+  job listings sit under /careers with a missing-index issue for /job-listings, the rebrand press release
+  is flagged as having no /news index, site-wide "#" links (cookie policy, see open position, skip to content)
+  are reported once each, and the two separate case study "next up" loops are reported.
