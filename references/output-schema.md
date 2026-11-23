@@ -9,7 +9,10 @@
   "settings": { depth_ceiling, collapse_threshold, crawl_options, routes_file_used },
   "summary":  { pages, crawled_pages, code_only_pages, templates, max_click_depth,
                 pages_by_click_depth, pages_by_type, issues_by_severity,
-                global_navigation: [ids], global_footer: [ids], crawl_warnings, missing_descriptions },
+                global_navigation: [ids], global_footer: [ids],
+                global_external_links: [urls]    external URLs linked from most pages (social, app stores),
+                sitewide_link_targets: [ids]     pages linked from the content area of most pages (e.g. a CTA),
+                crawl_warnings, missing_descriptions },
   "pages": [ {
       id            "P-001", stable across runs when --previous is used
       key           URL path, or pattern like /projects/{id} for templates

@@ -7,3 +7,5 @@ annotations.json
 sitemap*.json
 sitemap-handoff/
 *-sitemap-*.zip
+.venv/
+venv/

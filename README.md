@@ -7,10 +7,16 @@ It shows every page with a short description, its type, where it sits in the hie
 ## Install
 
 ```bash
-git clone https://github.com/AidanPhilpott/Sitemap-Generator ~/.claude/skills/ux-sitemap
+git clone https://github.com/AidanPhilpott/Sitemap-Generator.git ~/.claude/skills/ux-sitemap
 ```
 
-Requires Python 3.8+. Optional: Playwright, for apps that render pages with JavaScript (`pip install playwright && python -m playwright install chromium`).
+To update later:
+
+```bash
+git -C ~/.claude/skills/ux-sitemap pull
+```
+
+Requires Python 3.8+ (standard library only). Optional: Playwright, for apps that render pages with JavaScript (`pip install playwright && python -m playwright install chromium`).
 
 ## Use
 
@@ -19,7 +25,7 @@ Requires Python 3.8+. Optional: Playwright, for apps that render pages with Java
 3. For logged-in pages, log in with a test account, copy your session cookie from your browser's dev tools, and run `export SITEMAP_COOKIE="name=value"` before starting Claude Code. Never share a password.
 4. Send the resulting `<project>-sitemap-<date>.zip` to your design team.
 
-The crawler is read-only: it only sends GET requests, never submits forms, and skips logout and delete URLs.
+The crawler is read-only: it only sends GET requests, never submits forms, skips logout and delete URLs, stays on one host, and obeys robots.txt on non-local sites. Only map sites you own or are responsible for.
 
 ## What's in the bundle
 
@@ -30,5 +36,19 @@ The crawler is read-only: it only sends GET requests, never submits forms, and s
 | `links.csv` | Every connection between pages |
 | `issues.csv` | UX findings with severity and recommendations |
 | `sitemap.mmd` | Mermaid diagram (paste into FigJam, GitHub or Notion) |
-| `sitemap.json` | Full data |
+| `sitemap.json` | Full data ([format](references/output-schema.md)) |
 | `README.md` | Summary and hierarchy |
+
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| `SKILL.md` | The skill instructions Claude follows |
+| `scripts/` | Route discovery, crawler, site map builder and packager |
+| `assets/viewer.html` | Template for the interactive map |
+| `references/` | UX principles and output formats |
+| `evals/` | Test cases for the skill (a local Next.js MVP and a public site) |
+
+## License
+
+[MIT](LICENSE)
