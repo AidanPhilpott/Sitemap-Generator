@@ -7,7 +7,7 @@ It shows every page with a short description, its type, where it sits in the hie
 ## Install
 
 ```bash
-git clone https://github.com/<your-username>/ux-sitemap.git ~/.claude/skills/ux-sitemap
+git clone https://github.com/AidanPhilpott/Sitemap-Generator ~/.claude/skills/ux-sitemap
 ```
 
 Requires Python 3.8+. Optional: Playwright, for apps that render pages with JavaScript (`pip install playwright && python -m playwright install chromium`).
