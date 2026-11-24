@@ -208,7 +208,7 @@ def discover(root):
 
 
 def main():
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("project")
     ap.add_argument("--out", default="routes.json")
     a = ap.parse_args()
