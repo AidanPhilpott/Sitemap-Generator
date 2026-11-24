@@ -724,7 +724,7 @@ class Builder:
 
 
 def main():
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--crawl", required=True)
     ap.add_argument("--routes")
     ap.add_argument("--annotations")

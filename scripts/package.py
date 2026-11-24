@@ -131,7 +131,7 @@ def readme(data, zipname):
 
 
 def main():
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("sitemap")
     ap.add_argument("--out-dir", default="sitemap-handoff")
     a = ap.parse_args()
